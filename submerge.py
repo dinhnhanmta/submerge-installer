@@ -19,6 +19,7 @@ Lenh quan ly:
     submerge test [so...]       test ket noi that qua Xray (mac dinh: muc dang chon)
     submerge pick so...         chon them may chu (vd: pick 3 8 20-25)
     submerge unpick so...       bo chon
+    submerge url                in link de dan vao tab Links cua 3x-ui
 
 Chi dung thu vien chuan cua Python 3.
 """
@@ -62,6 +63,8 @@ STATE = os.environ.get("SUBMERGE_STATE", "/var/lib/submerge/state.json")
 TOKEN = os.environ.get("SUBMERGE_TOKEN", "")
 HOST = os.environ.get("SUBMERGE_HOST", "0.0.0.0")
 PORT = int(os.environ.get("SUBMERGE_PORT", "8899"))
+# Ten mien (hoac IP) cong khai cua VPS, chi dung de in ra link cho 3x-ui (`submerge url`).
+PUBLIC_HOST = os.environ.get("SUBMERGE_PUBLIC_HOST", "").strip()
 INTERVAL = int(os.environ.get("SUBMERGE_INTERVAL", "3600"))  # giay giua 2 lan tai lai nguon
 USER_AGENT = os.environ.get("SUBMERGE_UA", "v2rayNG/1.9.5")
 # 1 = them "[Ten nguon] " truoc ten moi may chu khi phat ra; 0 = giu nguyen ten goc.
@@ -803,10 +806,17 @@ def cmd_test(args):
     return 1 if tally[False] else 0
 
 
+def cmd_url(_args):
+    if len(TOKEN) < 16:
+        sys.exit("Khong doc duoc SUBMERGE_TOKEN (can chay bang root).")
+    print("http://%s:%d/%s" % (PUBLIC_HOST or "<IP-hoac-ten-mien-VPS>", PORT, TOKEN))
+
+
 def main():
     parser = argparse.ArgumentParser(prog="submerge", description="Gop va chon loc subscription.")
     sub = parser.add_subparsers(dest="cmd", required=True, metavar="lenh")
     sub.add_parser("serve", help="chay dich vu HTTP (systemd goi lenh nay)")
+    sub.add_parser("url", help="in link de dan vao tab Links cua 3x-ui")
     p = sub.add_parser("list", help="xem danh muc may chu")
     p.add_argument("-s", "--selected", action="store_true", help="chi hien muc dang chon")
     p.add_argument("filter", nargs="?", help="loc theo ten nguon / ten may chu")
@@ -822,7 +832,7 @@ def main():
                 stream.reconfigure(errors="replace")  # terminal khong phai UTF-8 van in duoc
             except (AttributeError, ValueError):
                 pass
-    handlers = {"serve": cmd_serve, "list": cmd_list, "test": cmd_test,
+    handlers = {"serve": cmd_serve, "url": cmd_url, "list": cmd_list, "test": cmd_test,
                 "pick": cmd_pick, "unpick": cmd_pick}
     sys.exit(handlers[args.cmd](args) or 0)
 

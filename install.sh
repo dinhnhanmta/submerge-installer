@@ -199,7 +199,11 @@ systemctl restart submerge
 IP="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i < NF; i++) if ($i == "src") print $(i + 1)}' || true)"
 echo
 echo "Da cai xong."
-echo "URL de dan vao tab Links cua 3x-ui:  http://${IP:-<IP-VPS>}:${SUBMERGE_PORT}/${SUBMERGE_TOKEN}"
+# SUBMERGE_PUBLIC_HOST (ten mien tro ve VPS) giup link khong doi khi chuyen VPS
+echo "URL de dan vao tab Links cua 3x-ui:  http://${SUBMERGE_PUBLIC_HOST:-${IP:-<IP-VPS>}}:${SUBMERGE_PORT}/${SUBMERGE_TOKEN}"
+if [ -z "${SUBMERGE_PUBLIC_HOST:-}" ]; then
+  echo "  (dat SUBMERGE_PUBLIC_HOST=<ten-mien> trong /etc/submerge/env de link dung ten mien thay cho IP)"
+fi
 echo "Trang thai:                          curl http://127.0.0.1:${SUBMERGE_PORT}/${SUBMERGE_TOKEN}/status"
 echo "Quan ly may chu:                     submerge list | test | pick | unpick"
 echo "Sao luu len GitHub:                  submerge-backup"

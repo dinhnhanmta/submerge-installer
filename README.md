@@ -10,7 +10,9 @@ Kho này công khai. Cấu hình (nguồn subscription, máy chủ đã chọn, 
 bash <(curl -fsSL https://raw.githubusercontent.com/dinhnhanmta/submerge-installer/main/install.sh)
 ```
 
-Lệnh hỏi mật khẩu sao lưu rồi cài dịch vụ, khôi phục nguồn, lựa chọn, token và khóa đẩy lên GitHub. Token giữ nguyên nên phần cuối URL không đổi; chỉ IP của VPS đổi, vì vậy cần sửa lại IP trong dòng Links của các client.
+Lệnh hỏi mật khẩu sao lưu rồi cài dịch vụ, khôi phục nguồn, lựa chọn, token và khóa đẩy lên GitHub.
+
+Link dán vào 3x-ui dùng tên miền (`SUBMERGE_PUBLIC_HOST` trong `/etc/submerge/env`) và token được khôi phục nguyên vẹn, nên link không đổi khi chuyển VPS: chỉ cần trỏ bản ghi DNS của tên miền về IP mới. Xem link bằng `submerge url`.
 
 Nếu 3x-ui chạy trong Docker và chưa chạy lúc cài, chạy lại `bash /opt/submerge/install.sh` sau khi 3x-ui đã lên để lấy Xray cho lệnh `submerge test`.
 
@@ -29,6 +31,7 @@ submerge list            # danh mục kèm số thứ tự, dấu * = đang phá
 submerge test 3 8 20-25  # test kết nối thật qua Xray (bỏ số = các máy chủ đang chọn)
 submerge pick 3 8        # thêm vào subscription
 submerge unpick 3        # bỏ khỏi subscription
+submerge url             # in link để dán vào tab Links của 3x-ui
 ```
 
 ## Vị trí file trên VPS
